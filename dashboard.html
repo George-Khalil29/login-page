@@ -1,49 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
+<script>
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
 
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-</head>
+    if (!user) {
+        window.location.href = "index.html";
+    }
 
-<body style="font-family: Arial; padding: 20px;">
+    document.getElementById("welcome").innerText = "Welcome, " + user.name + "!";
+    document.getElementById("info").innerText =
+        "Logged in at: " + user.loginTime + "\nEmail: " + user.email;
 
-    <h1 id="welcome"></h1>
-    <p id="info"></p>
-    <button id="logout">Logout</button>
+    console.log("📌 CURRENT ACTIVE USER:");
+    console.table(user);
 
-    <h2>All Registered Users</h2>
-    <div id="userList"></div>
+    // show all users
+    const allUsers = JSON.parse(localStorage.getItem("users")) || [];
+    let list = "<ul>";
+    allUsers.forEach(u => {
+        list += `<li>${u.name} — ${u.email} — Registered: ${u.createdAt}</li>`;
+    });
+    list += "</ul>";
 
-    <script>
-        const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    document.getElementById("userList").innerHTML = list;
 
-        // if no user logged in → kick back to login page
-        if (!user) {
-            window.location.href = "index.html";
-        }
+    console.log("📚 ALL REGISTERED USERS:");
+    console.table(allUsers);
 
-        document.getElementById("welcome").innerText = "Welcome, " + user.name + "!";
-        document.getElementById("info").innerText = 
-            "Logged in at: " + user.loginTime + "\nEmail: " + user.email;
+    // logout
+    document.getElementById("logout").onclick = () => {
+        const time = new Date().toLocaleString();
+        localStorage.setItem("lastLogout", time);
 
-        // show all users
-        const allUsers = JSON.parse(localStorage.getItem("users")) || [];
-        let list = "<ul>";
-        allUsers.forEach(u => {
-            list += `<li>${u.name} — ${u.email} — Registered: ${u.createdAt}</li>`;
-        });
-        list += "</ul>";
+        console.log(`🚪 USER LOGGED OUT at ${time}`);
+        console.table(user);
 
-        document.getElementById("userList").innerHTML = list;
-
-        // logout
-        document.getElementById("logout").onclick = () => {
-            localStorage.setItem("lastLogout", new Date().toLocaleString());
-            localStorage.removeItem("loggedInUser");
-            window.location.href = "index.html";
-        };
-    </script>
-
-</body>
-</html>
+        localStorage.removeItem("loggedInUser");
+        window.location.href = "index.html";
+    };
+</script>

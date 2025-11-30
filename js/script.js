@@ -30,9 +30,10 @@ signupForm.addEventListener("submit", (e) => {
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
 
-    // check duplicate email
+    // Check if user exists
     if (users.some(u => u.email === email)) {
         alert("This email is already registered.");
+        console.log(`❌ SIGNUP FAILED — Email already exists: ${email}`);
         return;
     }
 
@@ -44,12 +45,15 @@ signupForm.addEventListener("submit", (e) => {
     };
 
     users.push(newUser);
-
     localStorage.setItem("users", JSON.stringify(users));
 
     alert("Account created successfully!");
 
-    container.classList.remove("active"); // switch to login panel
+    // TERMINAL LOG
+    console.log("✅ NEW USER REGISTERED:");
+    console.table(users);
+
+    container.classList.remove("active"); // switch panel
 });
 
 
@@ -70,17 +74,23 @@ loginForm.addEventListener("submit", (e) => {
 
     if (!user) {
         alert("Invalid email or password.");
+        console.log(`❌ LOGIN FAILED — Email: ${email}`);
         return;
     }
 
-    // save logged-in user
-    localStorage.setItem("loggedInUser", JSON.stringify({
+    const loginData = {
         name: user.name,
         email: user.email,
         loginTime: new Date().toLocaleString()
-    }));
+    };
+
+    localStorage.setItem("loggedInUser", JSON.stringify(loginData));
 
     alert("Login successful!");
 
-    window.location.href = "dashboard.html"; // redirect to new page
+    // TERMINAL LOG
+    console.log("🔐 USER LOGGED IN:");
+    console.table(loginData);
+
+    window.location.href = "dashboard.html"; // redirect
 });
